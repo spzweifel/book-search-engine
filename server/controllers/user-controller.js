@@ -1,61 +1,80 @@
 // import user model
-const { User } = require('../models');
+const { User } = require("../models");
 // import sign token function from auth
-const { signToken } = require('../utils/auth');
+const { signToken } = require("../utils/auth");
 
 module.exports = {
   // get a single user by either their id or their username
-  async getSingleUser({ user = null, params }, res) {
-    const foundUser = await User.findOne({
-      $or: [{ _id: user ? user._id : params.id }, { username: params.username }],
-    });
+  async getSingleUser(req, res) {
+    try {
+      const foundUser = await User.findOne({
+        $or: [{ _id: req.user._id }, { username: req.params.username }],
+      });
 
     if (!foundUser) {
-      return res.status(400).json({ message: 'Cannot find a user with this id!' });
+      return res.status(400).json({ message: "Cannot find a user with this id!" });
     }
 
     res.json(foundUser);
-  },
-  // create a user, sign a token, and send it back (to client/src/components/SignUpForm.js)
-  async createUser({ body }, res) {
-    const user = await User.create(body);
+  }catch (err) {
+    console.log(err);
+    return res.status(500).json(err);
+  }
+},
 
-    if (!user) {
-      return res.status(400).json({ message: 'Something is wrong!' });
+  // create a user, sign a token, and send it back (to client/src/components/SignUpForm.js)
+  async addUser(req, res) {
+    try {
+      const user = await User.create(req.body);
+      console.log([req.body.username, req.body.email, req.body.password]);
+
+      if (!user) {
+        return res.status(400).json({ message: "Something is wrong!" });
+      }
+      const token = signToken(user);
+      res.json({ token, user });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json(err);
     }
-    const token = signToken(user);
-    res.json({ token, user });
   },
   // login a user, sign a token, and send it back (to client/src/components/LoginForm.js)
   // {body} is destructured req.body
-  async login({ body }, res) {
-    const user = await User.findOne({ $or: [{ username: body.username }, { email: body.email }] });
-    if (!user) {
-      return res.status(400).json({ message: "Can't find this user" });
-    }
+  async login(req, res) {
+    try {
+      const user = await User.findOne({
+        $or: [{ username: req.body.username }, { email: req.body.email }],
+      });
 
-    const correctPw = await user.isCorrectPassword(body.password);
+      if (!user) {
+        return res.status(400).json({ message: "Can't find this user" });
+      }
 
-    if (!correctPw) {
-      return res.status(400).json({ message: 'Wrong password!' });
+      const correctPw = await user.isCorrectPassword(req.body.password);
+
+      if (!correctPw) {
+        return res.status(400).json({ message: "Wrong password!" });
+      }
+      const token = signToken(user);
+      res.json({ token, user });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json(err);
     }
-    const token = signToken(user);
-    res.json({ token, user });
   },
   // save a book to a user's `savedBooks` field by adding it to the set (to prevent duplicates)
   // user comes from `req.user` created in the auth middleware function
-  async saveBook({ user, body }, res) {
-    console.log(user);
+  async saveBook(req, res) {
     try {
       const updatedUser = await User.findOneAndUpdate(
-        { _id: user._id },
-        { $addToSet: { savedBooks: body } },
+        { _id: req.user._id },
+        { $addToSet: { savedBooks: req.body } },
         { new: true, runValidators: true }
       );
       return res.json(updatedUser);
     } catch (err) {
       console.log(err);
-      return res.status(400).json(err);
+      return res.status(500).json(err);
     }
   },
   // remove a book from `savedBooks`
@@ -66,7 +85,9 @@ module.exports = {
       { new: true }
     );
     if (!updatedUser) {
-      return res.status(404).json({ message: "Couldn't find user with this id!" });
+      return res
+        .status(404)
+        .json({ message: "Couldn't find user with this id!" });
     }
     return res.json(updatedUser);
   },

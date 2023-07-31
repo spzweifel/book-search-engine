@@ -11,7 +11,27 @@ import { GET_ME } from "../utils/queries";
 
 const SavedBooks = () => {
   const { loading, data } = useQuery(GET_ME);
-  const [removeBook, { error }] = useMutation(REMOVE_BOOK);
+  const [removeBook, { error }] = useMutation(REMOVE_BOOK, {
+    update(cache, { data: { removeBook } }) {
+      try {
+        const { savedBooks } = cache.readQuery({ query: GET_ME });
+
+        cache.writeQuery({
+          query: GET_ME,
+          data: { savedBooks: [...savedBooks, removeBook] },
+        });
+      } catch (e) {
+        console.error(e);
+      }
+
+      // update me object's cache
+      const { me } = cache.readQuery({ query: GET_ME });
+      cache.writeQuery({
+        query: GET_ME,
+        data: { me: { ...me, savedBooks: [...me.savedBooks, removeBook] } },
+      });
+    },
+  });
 
   const userData = data?.me || {};
 
