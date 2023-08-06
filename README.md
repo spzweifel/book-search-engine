@@ -20,13 +20,13 @@ In this project, I was presented with starter code for a book searching app. I m
 
 ## Installation
 
-The deployed Heroku app is [here]()
+The deployed Heroku app is [here](https://still-ridge-49599-3e9eae4143b2.herokuapp.com/)
 
 GitHub URL: https://github.com/spzweifel/book-search-engine
 
 ## Usage
 
-Deployed application url:
+Deployed application url: https://still-ridge-49599-3e9eae4143b2.herokuapp.com/
 
 ## Screenshot / Video
 
