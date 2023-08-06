@@ -6,11 +6,7 @@ A Google Books API search engine built with React.
 
 ## Description
 
-In this project, I was presented with starter code for a book searching app. It is using both Apollo, React, and a MongoDB database
-- Search for books, create a profile; add or remove books from your profile. 
-- This application is built with Apollo Server and React. It uses a MongoDB database and Node.js/Espress.js server and API. It is a full-stack MERN application. 
-- The application uses GraphQL queries and mutations to fetch and modify data, and allows the user to find, save and delete book queries, as well as login with a user profile and password. 
-- The developer learned how to refactor an existing RESTful API, implement mongoDB and Apollo Server, set up user models, authentication methods for security, call on local storage, deploy a React front end, and handle server errors. Server error handling was extremely important on this project because it allowed the developer to follow the code and to identify specific areas that needed debugging.
+In this project, I was presented with starter code for a book searching app. I modified the code so that a user can now search for books, add/remove them from their profile, and sign up and log in. It is using both Apollo, React, and a MongoDB database. 
 
 ## Table Of Contents
 
@@ -24,7 +20,7 @@ In this project, I was presented with starter code for a book searching app. It 
 
 ## Installation
 
-Visit the Heroku deployed app [here]()
+The deployed Heroku app is [here]()
 
 GitHub URL: https://github.com/spzweifel/book-search-engine
 
@@ -46,7 +42,7 @@ Deployed application url:
 
 ## Contributing
 
-Third party assets used in this project include:
+MongoDB was used in this project. It can be found below.
 Mongo DB: https://www.mongodb.com/
 
 ## License
@@ -60,4 +56,5 @@ This project is licensed under the MIT license.
 - React 
 - Apollo Server 
 - Node.js
+
 
